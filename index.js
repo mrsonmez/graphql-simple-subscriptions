@@ -134,7 +134,7 @@ const schema = createSchema({
     type Subscription {
       userCreated: User!
       eventCreated: Event!
-      participantCreated: Participant!
+      participantAdded: Participant!
     }
   `,
   resolvers: {
@@ -258,7 +258,7 @@ const schema = createSchema({
       addParticipant: (parent, { data }, { pubSub }) => {
         const participant = { id: nanoid(), ...data };
         participants.push(participant);
-        pubSub.publish("participantCreated", participant);
+        pubSub.publish("participantAdded", participant);
         return participant;
       },
       updateParticipant: (parent, { id, data }) => {
@@ -295,9 +295,8 @@ const schema = createSchema({
         subscribe: (_, __, { pubSub }) => pubSub.subscribe("eventCreated"),
         resolve: (payload) => payload,
       },
-      participantCreated: {
-        subscribe: (_, __, { pubSub }) =>
-          pubSub.subscribe("participantCreated"),
+      participantAdded: {
+        subscribe: (_, __, { pubSub }) => pubSub.subscribe("participantAdded"),
         resolve: (payload, variables) => payload,
       },
     },
